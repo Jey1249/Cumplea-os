@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>¡Feliz Cumpleaños, Mi Amor! 🎂✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+    background: #03040c; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+
+  #caption {
+    position: fixed; left: 50%; bottom: 12.5%; transform: translateX(-50%);
+    text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; color: #fff;
+    font-size: clamp(1.18rem, 4.4vw, 1.9rem); font-style: italic; font-weight: 400;
+    text-shadow: 0 4px 28px rgba(0,0,0,0.95), 0 0 45px rgba(255, 180, 210, 0.4);
+    pointer-events: none; letter-spacing: 0.6px; padding: 14px 32px; border-radius: 22px;
+    background: rgba(10, 8, 24, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    max-width: 90vw; width: max-content; line-height: 1.48; border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); z-index: 8;
+  }
+  #caption span {
+    display: inline-block; margin-right: .28em; opacity: 0;
+    transform: translateY(16px) scale(0.96); filter: blur(6px);
+    transition: opacity 1.2s cubic-bezier(0.2, 0, 0.2, 1),
+                transform 1.2s cubic-bezier(0.2, 0, 0.2, 1),
+                filter 1.2s ease;
+  }
+  #caption.on span { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+
+  #sub {
+    position: fixed; left: 0; right: 0; bottom: 5.8%; text-align: center;
+    font-family: 'Plus Jakarta Sans', sans-serif; color: #ffd6e5;
+    font-size: clamp(.75rem, 2.8vw, .95rem); letter-spacing: 2px;
+    text-transform: uppercase; text-shadow: 0 2px 14px rgba(0,0,0,0.95);
+    pointer-events: none; transition: opacity 1.8s ease; opacity: 0; padding: 0 18px;
+    font-weight: 500; z-index: 8;
+  }
+  #sub.on { opacity: 1; }
+
+  #ui {
+    position: fixed; top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    display: flex; gap: 8px; z-index: 15; flex-wrap: nowrap; justify-content: flex-end;
+  }
+  #ui button {
+    background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.24);
+    color: #fff; border-radius: 999px; padding: 8px 16px; font-size: .88rem; font-weight: 400;
+    cursor: pointer; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    font-family: 'Plus Jakarta Sans', sans-serif; transition: all .25s cubic-bezier(0.2, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3); display: inline-flex; align-items: center; gap: 6px;
+  }
+  #ui button:hover {
+    background: rgba(255, 255, 255, 0.24); border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255, 107, 157, 0.3);
+  }
+  #ui button:active { transform: scale(0.94); }
+  #ui button.pulse {
+    animation: pulseBtn 2s infinite; background: rgba(255, 107, 157, 0.35);
+    border-color: rgba(255, 107, 157, 0.7);
+  }
+  @keyframes pulseBtn {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 157, 0.45); }
+    50% { box-shadow: 0 0 0 12px rgba(255, 107, 157, 0); }
+  }
+
+  #toast {
+    position: fixed; top: max(68px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right)); z-index: 16;
+    background: rgba(14, 10, 26, 0.92); color: #fff;
+    padding: 10px 20px; border-radius: 14px; font-size: .88rem;
+    opacity: 0; transform: translateY(-10px); transition: all .4s cubic-bezier(0.2, 0, 0.2, 1);
+    pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.45);
+  }
+  #toast.on { opacity: 1; transform: translateY(0); }
+
+  /* PANTALLA DE INICIO SIN FORMULARIO */
+  #start {
+    position: fixed; inset: 0; display: grid; place-items: center; z-index: 25;
+    background: radial-gradient(circle at 50% 40%, #1e183e 0%, #090716 75%, #020308 100%);
+    transition: opacity 1.4s ease, transform 1.4s ease, filter 1.4s ease;
+    text-align: center; padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+    cursor: pointer;
+  }
+  #start.hidden {
+    opacity: 0; pointer-events: none; filter: blur(14px); transform: scale(1.06);
+  }
+  #start .card {
+    position: relative; z-index: 2; width: min(420px, 92vw);
+    background: rgba(18, 14, 34, 0.65); padding: 38px 28px; border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  }
+  #start .cake-icon {
+    font-size: 3.6rem; margin-bottom: 8px;
+    animation: cakeBounce 2.4s infinite ease-in-out;
+    filter: drop-shadow(0 4px 18px rgba(255, 107, 157, 0.6));
+  }
+  @keyframes cakeBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.08); }
+  }
+  #start h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif; color: #fff; font-weight: 400;
+    font-size: clamp(2.4rem, 8vw, 3.4rem); margin: 0 0 8px; letter-spacing: 1px;
+    text-shadow: 0 4px 25px rgba(255, 120, 170, 0.5);
+  }
+  #start p {
+    color: #d2cff2; font-weight: 300; margin: 0 0 28px; font-size: 1.05rem; letter-spacing: 0.5px;
+    line-height: 1.5;
+  }
+  #start button {
+    width: 100%;
+    background: linear-gradient(135deg, #ff5e95 0%, #b342f5 50%, #5e54f7 100%);
+    color: #fff; border: none; padding: 18px 32px; border-radius: 999px;
+    font-size: 1.18rem; font-weight: 600; letter-spacing: 0.8px; cursor: pointer;
+    box-shadow: 0 14px 38px rgba(179, 66, 245, 0.45);
+    transition: all .35s cubic-bezier(0.2, 0, 0.2, 1);
+  }
+  #start button:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 18px 48px rgba(255, 94, 149, 0.6);
+  }
+  #start small {
+    display: block; margin-top: 22px; color: #a4a2cc; font-size: .84rem; letter-spacing: 0.5px;
+  }
+
+  .twinkle {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff;
+    animation: tw 4s infinite ease-in-out; pointer-events: none;
+  }
+  @keyframes tw {
+    0%, 100% { opacity: .08; transform: scale(0.8); }
+    50% { opacity: .9; transform: scale(1.6); box-shadow: 0 0 10px #fff; }
+  }
+
+  #barraWrap {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 28px;
+    z-index: 15; cursor: pointer; display: flex; align-items: flex-end;
+    touch-action: none; padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  #barra {
+    height: 4.5px; width: 0%;
+    background: linear-gradient(90deg, #ff6b9d 0%, #be57ff 50%, #5fd3ff 100%);
+    box-shadow: 0 0 14px rgba(190, 87, 255, 0.7);
+    transition: height .2s cubic-bezier(0.2, 0, 0.2, 1);
+  }
+  #barraWrap:hover #barra { height: 9px; }
+
+  /* MODAL DE CARTA DEDICATORIA ROMÁNTICA */
+  #letterModal {
+    position: fixed; inset: 0; z-index: 30; display: grid; place-items: center;
+    background: rgba(4, 3, 10, 0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    opacity: 0; pointer-events: none; transition: opacity 0.6s cubic-bezier(0.2, 0, 0.2, 1);
+    padding: 24px;
+  }
+  #letterModal.open { opacity: 1; pointer-events: auto; }
+  #letterCard {
+    background: linear-gradient(145deg, #18132e 0%, #291a38 50%, #15102a 100%);
+    border: 1px solid rgba(255, 200, 225, 0.28); border-radius: 26px;
+    padding: 34px 28px; max-width: 440px; width: 100%; color: #fff;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 107, 157, 0.2);
+    transform: translateY(20px) scale(0.95); transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
+    text-align: center; position: relative;
+  }
+  #letterModal.open #letterCard { transform: translateY(0) scale(1); }
+  #letterCard h2 {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 2.1rem;
+    color: #ffd6e5; margin: 0 0 14px; font-weight: 600;
+  }
+  #letterCard p {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.25rem;
+    font-style: italic; line-height: 1.65; color: #f2e9f6; margin: 0 0 20px;
+  }
+  #letterCard .signature {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
+    color: #ff9ebb; letter-spacing: 1px; font-weight: 500; text-transform: uppercase;
+  }
+  #btnCloseLetter {
+    margin-top: 22px; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff; padding: 10px 26px; border-radius: 999px; font-size: 0.92rem; cursor: pointer;
+    transition: all 0.25s;
+  }
+  #btnCloseLetter:hover { background: rgba(255, 107, 157, 0.35); border-color: rgba(255, 107, 157, 0.6); }
+
+  #bgAudio { display: none; }
+
+  @media (max-width: 640px) {
+    #ui {
+      top: max(12px, env(safe-area-inset-top));
+      right: max(12px, env(safe-area-inset-right));
+      gap: 6px;
+    }
+    #ui button { padding: 7px 11px; font-size: .8rem; }
+    #ui button .btn-txt { display: none; }
+    #caption {
+      bottom: 10.5%; padding: 10px 18px;
+      font-size: clamp(0.98rem, 4.3vw, 1.25rem);
+      border-radius: 16px; max-width: 92vw; line-height: 1.4;
+    }
+    #sub {
+      bottom: 4.8%; font-size: clamp(0.68rem, 2.9vw, 0.82rem);
+      letter-spacing: 1.4px; padding: 0 10px;
+    }
+    #start .card { padding: 30px 20px; border-radius: 24px; width: min(340px, 92vw); }
+    #start h1 { font-size: clamp(2.1rem, 8vw, 2.6rem); }
+    #start button { padding: 16px 24px; font-size: 1.1rem; }
+    #toast {
+      top: max(56px, env(safe-area-inset-top));
+      right: max(12px, env(safe-area-inset-right));
+      font-size: .82rem; padding: 8px 14px;
+    }
+    #barraWrap { height: 32px; }
+    #barra { height: 5.5px; }
+    #letterCard { padding: 26px 20px; }
+    #letterCard h2 { font-size: 1.8rem; }
+    #letterCard p { font-size: 1.1rem; line-height: 1.55; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div id="caption"></div>
+<div id="sub"></div>
+<div id="barraWrap"><div id="barra"></div></div>
+<div id="toast"></div>
+
+<div id="ui">
+  <button id="btnLetter" title="Dedicatoria de cumpleaños">💌<span class="btn-txt"> Carta</span></button>
+  <button id="btnMute" title="Música">🔊<span class="btn-txt"> Música</span></button>
+  <button id="btnPause" title="Pausar / Seguir">⏸<span class="btn-txt"> Pausa</span></button>
+  <button id="btnReplay" title="Repetir historia">↻<span class="btn-txt"> Repetir</span></button>
+  <button id="btnShare" title="Copiar enlace">🔗<span class="btn-txt"> Compartir</span></button>
+</div>
+
+<!-- CARTA DEDICATORIA DE CUMPLEAÑOS -->
+<div id="letterModal">
+  <div id="letterCard">
+    <div style="font-size: 2.2rem; margin-bottom: 6px;">💌</div>
+    <h2 id="modalTitle">Para ti, mi amor</h2>
+    <p id="modalMsg">
+      "Hoy celebro con toda mi alma el día en que nació la persona más maravillosa de mi vida. Gracias por cada risa, por cada abrazo y por iluminar mi mundo con tu amor. Que este nuevo año te regale tanta felicidad como la que tú me das cada día. ¡Feliz Cumpleaños!"
+    </p>
+    <div class="signature" id="modalSig">Con todo mi amor siempre ✨</div>
+    <button id="btnCloseLetter">Guardar en el corazón ✨</button>
+  </div>
+</div>
+
+<!-- PANTALLA DE INICIO SIN FORMULARIO -->
+<div id="start">
+  <div class="card">
+    <div class="cake-icon">🎂</div>
+    <h1>¡Feliz Cumpleaños!</h1>
+    <p>Una historia creada con todo mi amor para celebrar tu día especial</p>
+    <button id="btnStart">Toca para abrir tu sorpresa 🎁✨</button>
+    <small>🎧 Activa el sonido para la mejor experiencia · Toca para pausar</small>
+  </div>
+</div>
+
+<audio id="bgAudio" src="musica.mp3" preload="auto" loop playsinline></audio>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN GENERAL Y TEXTOS DE LA HISTORIA
+   ============================================================ */
+const CONFIG = {
+  nombre:     "Mi amor",
+  tuNombre:   "Tu enamorado",
+  fraseFinal: "¡Feliz Cumpleaños, mi amor! Gracias por existir y compartir tu vida conmigo. 🎂💖",
+  fotos: [
+    "img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg", "img5.jpg",
+    "img6.jpg", "img7.jpg", "img8.jpg", "img9.jpg"
+  ],
+  textos: [
+    "Dos mundos distintos. Comenzamos como completos desconocidos en el instituto…",
+    "Con los años nos hicimos amigos, pasando por cientos de alejamientos y acercamientos.",
+    "Hasta que un día salimos al parque, y empezamos a conocernos verdaderamente.",
+    "Vimos las cualidades del otro, y entendimos lo mucho que valíamos.",
+    "Después de pasar por mucho, dimos el paso de formalizar nuestra relación para unir nuestros mundos."
+  ]
+};
+
+const qs = new URLSearchParams(location.search);
+let NOMBRE      = qs.get('para') || CONFIG.nombre;
+let TU_NOMBRE   = qs.get('de')   || CONFIG.tuNombre;
+let FRASE_FINAL = qs.get('msg')  || `¡Feliz Cumpleaños, ${NOMBRE}! Hoy celebro tu vida y nuestro amor. 🎂💖`;
+
+// Actualizar textos de la carta modal
+document.getElementById('modalTitle').textContent = `Para ti, ${NOMBRE} 💖`;
+document.getElementById('modalSig').textContent   = `Con todo mi amor — de ${TU_NOMBRE} ✨`;
+
+(function(){
+  const st = document.getElementById('start');
+  for (let i = 0; i < 48; i++){
+    const d = document.createElement('div');
+    d.className = 'twinkle';
+    d.style.left = (Math.random() * 100) + '%';
+    d.style.top  = (Math.random() * 100) + '%';
+    d.style.animationDelay = (Math.random() * 4) + 's';
+    st.appendChild(d);
+  }
+})();
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H, DPR, stars = [], NOW = 0;
+
+// Linternas de deseos flotantes (Sky Lanterns)
+let skyLanterns = [];
+function initSkyLanterns(){
+  skyLanterns = [];
+  for (let i = 0; i < 18; i++){
+    skyLanterns.push({
+      x: pseudo(i * 5.7) * W,
+      y: pseudo(i * 8.3) * H * 0.75,
+      speed: 10 + pseudo(i * 3.1) * 14,
+      size: 7 + pseudo(i * 1.9) * 8,
+      wobble: pseudo(i * 4.4) * Math.PI * 2,
+      wobbleSpeed: 0.8 + pseudo(i * 2.2) * 0.7
+    });
+  }
+}
+
+// Estado interactivo de la vela de cumpleaños
+let candleBlown = false;
+let candleSmoke = [];
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  makeStars();
+  initSkyLanterns();
+}
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => { setTimeout(resize, 150); });
+
+function pseudo(n) { const x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); }
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+function lerp(a, b, t){ return a + (b - a) * t; }
+function ease(t){ return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+function easeInOutCubic(t){ return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function hexToRgb(h){
+  h = h.replace('#','');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function lerpC(a, b, t){
+  const A = hexToRgb(a), B = hexToRgb(b);
+  return `rgb(${Math.round(A[0]+(B[0]-A[0])*t)},${Math.round(A[1]+(B[1]-A[1])*t)},${Math.round(A[2]+(B[2]-A[2])*t)})`;
+}
+
+function getScale(){
+  if (H > W) {
+    return clamp(W / 330, 0.95, 1.45);
+  }
+  return clamp(Math.min(W / 460, H / 520), 1.0, 2.5);
+}
+
+function makeStars(){
+  stars = [];
+  const n = Math.round(clamp(W * H / 3800, 75, 260));
+  for (let i = 0; i < n; i++){
+    stars.push({
+      x: pseudo(i * 3.1) * W,
+      y: pseudo(i * 7.7) * H * 0.72,
+      r: 0.6 + pseudo(i * 11.3) * 1.8,
+      ph: pseudo(i * 5.5) * Math.PI * 2
+    });
+  }
+}
+
+/* ============================================================
+   SISTEMA DE MÚSICA (INICIA EN SEGUNDO 20)
+   ============================================================ */
+const bgAudio = document.getElementById('bgAudio');
+let isAudioFilePlaying = false;
+const AUDIO_START_SECOND = 20;
+
+const Music = {
+  ctx: null, master: null, bus: null, timer: null, step: 0, next: 0,
+  enabled: true, ready: false, level: 0.55,
+  mtof(m){ return 440 * Math.pow(2, (m - 69) / 12); },
+  chords: [[60,64,67,71],[59,62,67,71],[57,60,64,69],[53,57,60,65]],
+  bass:   [36,31,33,29],
+  melody: [
+    [76,null,79,null,76,null,74,null],
+    [74,null,71,null,74,null,79,null],
+    [72,null,76,null,81,null,79,null],
+    [77,null,76,null,72,null,null,null]
+  ],
+  init(){
+    if (this.ready) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ctx = new AC();
+    const c = this.ctx;
+    this.master = c.createGain(); this.master.gain.value = 0;
+    this.bus = c.createGain(); this.bus.gain.value = 0.9;
+    const delay = c.createDelay(1.5); delay.delayTime.value = 0.5;
+    const fb = c.createGain(); fb.gain.value = 0.45;
+    const wet = c.createGain(); wet.gain.value = 0.45;
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2800;
+    this.bus.connect(lp); lp.connect(this.master);
+    lp.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(this.master);
+    this.master.connect(c.destination);
+    this.ready = true;
+  },
+  note(freq, time, dur, vol, type){
+    const c = this.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(vol, time + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+    o.connect(g); g.connect(this.bus);
+    o.start(time); o.stop(time + dur + 0.1);
+  },
+  schedule(){
+    const c = this.ctx, E = 0.48; 
+    while (this.next < c.currentTime + 0.4){
+      const s = this.step % 32, ci = Math.floor(s/8), k = s % 8;
+      const t = this.next;
+      if (k === 0){
+        this.chords[ci].forEach(m => this.note(this.mtof(m-12), t, E*9, 0.04, 'sine'));
+        this.note(this.mtof(this.bass[ci]), t, E*5, 0.18, 'sine');
+      }
+      const ch = this.chords[ci];
+      const arp = [0,1,2,3,2,1,2,1][k];
+      this.note(this.mtof(ch[arp]), t, E*2.5, 0.05, 'triangle');
+      const m = this.melody[ci][k];
+      if (m) this.note(this.mtof(m), t, E*3.5, 0.07, 'sine');
+      this.next += E;
+      this.step++;
+    }
+  },
+  startSynth(){
+    this.init();
+    if (!this.ready) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (!this.timer){
+      this.next = this.ctx.currentTime + 0.1;
+      this.step = 0;
+      this.timer = setInterval(() => this.schedule(), 100);
+    }
+    this.fade(this.enabled ? this.level : 0, 2);
+  },
+  start(){
+    if (this.enabled) {
+      bgAudio.volume = 0.75;
+      if (bgAudio.currentTime < AUDIO_START_SECOND - 0.5) {
+        try { bgAudio.currentTime = AUDIO_START_SECOND; } catch(_){}
+      }
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isAudioFilePlaying = true;
+        }).catch(() => {
+          isAudioFilePlaying = false;
+          this.startSynth();
+        });
+      }
+    }
+  },
+  fade(v, secs){
+    if (isAudioFilePlaying) {
+      bgAudio.volume = v;
+      return;
+    }
+    if (!this.ready) return;
+    const g = this.master.gain, now = this.ctx.currentTime;
+    g.cancelScheduledValues(now);
+    g.setValueAtTime(g.value, now);
+    g.linearRampToValueAtTime(v, now + secs);
+  },
+  pause(){
+    if (isAudioFilePlaying) bgAudio.pause();
+    if (this.ready && this.ctx.state === 'running') this.ctx.suspend();
+  },
+  resume(){
+    if (!this.enabled) return;
+    if (isAudioFilePlaying) {
+      bgAudio.play().catch(()=>{});
+    } else if (this.ready && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  },
+  toggle(){
+    this.enabled = !this.enabled;
+    if (isAudioFilePlaying) {
+      bgAudio.muted = !this.enabled;
+    } else {
+      this.fade(this.enabled ? this.level : 0, 0.5);
+    }
+    return this.enabled;
+  }
+};
+
+bgAudio.addEventListener('seeked', () => {
+  if (started && bgAudio.currentTime < 1 && elapsed > 2) {
+    try { bgAudio.currentTime = AUDIO_START_SECOND; } catch(_){}
+  }
+});
+bgAudio.addEventListener('ended', () => {
+  try {
+    bgAudio.currentTime = AUDIO_START_SECOND;
+    bgAudio.play();
+  } catch(_){}
+});
+
+/* ============================================================
+   DIBUJO DE ELEMENTOS AMBIENTALES
+   ============================================================ */
+function drawStars(alpha, t){
+  ctx.save();
+  ctx.fillStyle = '#ffffff';
+  for (const s of stars){
+    const tw = 0.5 + 0.5 * Math.sin(t * 1.8 + s.ph);
+    ctx.globalAlpha = alpha * (0.2 + tw * 0.8);
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    if (tw > 0.94) {
+      ctx.globalAlpha = alpha * 0.75;
+      ctx.shadowBlur = 8; ctx.shadowColor = '#fff';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r * 1.4, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+  ctx.restore();
+}
+
+function drawShootingStar(t, period, offset){
+  const k = ((t + offset) % period);
+  const dur = 1.1;
+  if (k > dur) return;
+  const p = k / dur;
+  const idx = Math.floor((t + offset) / period);
+  const sx = W * (0.45 + pseudo(idx * 3.3) * 0.5);
+  const sy = H * (0.04 + pseudo(idx * 5.1) * 0.18);
+  const len = W * 0.28;
+  const x = sx - p * len, y = sy + p * len * 0.45;
+  const g = ctx.createLinearGradient(x, y, x + len * 0.4, y - len * 0.18);
+  g.addColorStop(0, 'rgba(255,255,255,' + (1 - p) + ')');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.save();
+  ctx.strokeStyle = g; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len * 0.4, y - len * 0.18); ctx.stroke();
+  ctx.restore();
+}
+
+function drawMoon(x, y, r){
+  ctx.save();
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r * 4.5);
+  g.addColorStop(0, 'rgba(255, 248, 220, 0.45)');
+  g.addColorStop(0.5, 'rgba(255, 235, 190, 0.15)');
+  g.addColorStop(1, 'rgba(255, 235, 190, 0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r * 4.5, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = '#fffdf0';
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  
+  ctx.fillStyle = 'rgba(215, 205, 165, 0.28)';
+  ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.2, r * 0.22, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + r * 0.25, y + r * 0.28, r * 0.15, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x - r * 0.05, y + r * 0.35, r * 0.12, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawHeart(x, y, size, color){
+  ctx.save();
+  ctx.translate(x, y);
+  const k = size / 16;
+  ctx.scale(k, k);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, 5);
+  ctx.bezierCurveTo(-15, -7, -8, -19, 0, -10);
+  ctx.bezierCurveTo(8, -19, 15, -7, 0, 5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawFireflies(t, groundY, S, count, alpha){
+  ctx.save();
+  for (let i = 0; i < count; i++){
+    const r = pseudo(i * 9.1);
+    const x = W * r + Math.sin(t * 0.6 + i * 1.5) * 35 * S;
+    const y = groundY - 25 * S - pseudo(i * 4.4) * H * 0.48 + Math.cos(t * 0.8 + i * 2.2) * 22 * S;
+    const a = (0.35 + 0.65 * Math.sin(t * 3.0 + i * 2.1) * 0.5 + 0.35) * alpha;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, 14 * S);
+    g.addColorStop(0, `rgba(255, 245, 150, ${clamp(a, 0, 1)})`);
+    g.addColorStop(0.35, `rgba(255, 210, 100, ${clamp(a * 0.45, 0, 1)})`);
+    g.addColorStop(1, 'rgba(255, 210, 100, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, 14 * S, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBird(x, y, s, t, color){
+  const f = Math.sin(t * 9) * 0.65;
+  ctx.save();
+  ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, 1.8 * s); ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x - 10 * s, y + f * 7 * s);
+  ctx.quadraticCurveTo(x - 4 * s, y - 5 * s, x, y);
+  ctx.quadraticCurveTo(x + 4 * s, y - 5 * s, x + 10 * s, y + f * 7 * s);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBuildings(groundY, seed, color, hMul, winAlpha, t){
+  ctx.save();
+  const n = 9;
+  for (let i = 0; i < n; i++){
+    const r = pseudo(i * 13.7 + seed);
+    const w = W * (0.09 + r * 0.08);
+    const x = (i / n) * W - w * 0.15 + r * 24;
+    const h = H * (0.10 + pseudo(i + 40 + seed) * 0.20) * hMul;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, groundY - h, w, h);
+    ctx.fillStyle = 'rgba(255, 218, 145, ' + winAlpha + ')';
+    for (let wy = groundY - h + 10; wy < groundY - 8; wy += 17){
+      for (let wx = x + 7; wx < x + w - 9; wx += 14){
+        const q = pseudo(wx * 0.7 + wy * 1.3 + seed);
+        if (q > 0.5){
+          const flick = q > 0.92 ? (0.4 + 0.6 * Math.sin(t * 2.5 + q * 40)) : 1;
+          ctx.globalAlpha = flick;
+          ctx.fillRect(wx, wy, 4.5, 7.5);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+
+function drawLamp(x, groundY, S, glow){
+  ctx.save();
+  ctx.fillStyle = '#0a081a';
+  ctx.fillRect(x - 2.5 * S, groundY - 86 * S, 5 * S, 86 * S);
+  ctx.fillRect(x - 6 * S, groundY - 4 * S, 12 * S, 4 * S);
+  ctx.fillRect(x - 11 * S, groundY - 90 * S, 22 * S, 5 * S);
+  
+  const g = ctx.createRadialGradient(x, groundY - 86 * S, 0, x, groundY - 86 * S, 95 * S);
+  g.addColorStop(0, 'rgba(255, 225, 140, ' + (0.75 * glow) + ')');
+  g.addColorStop(0.4, 'rgba(255, 210, 110, ' + (0.25 * glow) + ')');
+  g.addColorStop(1, 'rgba(255, 210, 110, 0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, groundY - 86 * S, 95 * S, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = 'rgba(255, 250, 220, ' + glow + ')';
+  ctx.beginPath(); ctx.arc(x, groundY - 86 * S, 5.5 * S, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+/* ============================================================
+   PERSONAJES CON EXPRESIONES FACIALES Y GESTOS RICOS
+   ============================================================ */
+function drawPerson(x, baseY, S, o){
+  o = o || {};
+  const who      = o.who || 'a';
+  const facing   = o.facing === undefined ? 1 : o.facing;
+  const isSitting = o.isSitting || false;
+  const moving   = !isSitting && o.walk !== undefined && o.walk !== 0;
+  const walk     = o.walk || 0;
+  const sw       = moving ? Math.sin(walk) : 0;
+  const lean     = o.lean || 0;
+  const headTilt = o.headTilt || 0;
+  const expr     = o.expression || (o.happy ? 'happy' : 'neutral');
+  const gazeX    = o.gazeX !== undefined ? o.gazeX : (facing > 0 ? 0.3 : -0.3);
+  const gazeY    = o.gazeY !== undefined ? o.gazeY : 0;
+  const bob      = isSitting ? 0 : (moving ? -Math.abs(Math.cos(walk)) * 2.5 : Math.sin(NOW * 1.8 + (who==='a'?0:1.4)) * 0.8);
+
+  const skinTone  = '#ffe6d4';
+  const skinShade = '#f5cbb3';
+  const colA      = '#3f4f78';
+  const colAInner = '#e8ecf4';
+  const pantsA    = '#1d2338';
+  const hairA     = '#231e30';
+  
+  const colB      = '#d96c92';
+  const colBSkirt = '#8c3558';
+  const hairB     = '#361e2a';
+
+  if (o.shadow !== false){
+    ctx.save();
+    ctx.globalAlpha = 0.28;
+    ctx.fillStyle = '#02030a';
+    ctx.beginPath();
+    ctx.ellipse(x, baseY + 2, 22 * S, 5.5 * S, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Halo cálido romántico si están en el abrazo final
+  if (o.hug) {
+    ctx.save();
+    const hg = ctx.createRadialGradient(x, baseY - 40 * S, 0, x, baseY - 40 * S, 48 * S);
+    hg.addColorStop(0, 'rgba(255, 180, 220, 0.35)');
+    hg.addColorStop(0.5, 'rgba(255, 210, 140, 0.15)');
+    hg.addColorStop(1, 'rgba(255, 180, 220, 0)');
+    ctx.fillStyle = hg;
+    ctx.beginPath(); ctx.arc(x, baseY - 40 * S, 48 * S, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.translate(x, baseY);
+  ctx.rotate(lean * facing);
+  ctx.scale(S * facing, S);
+
+  const hipY = isSitting ? -16 : -24 + bob;
+  const neckY = isSitting ? -48 : -54 + bob;
+  const shoulderY = neckY + 7;
+  const headR = 12;
+  const headCY = neckY - headR - 1.5;
+  const isF = who === 'b';
+
+  // Cabello trasero
+  if (isF){
+    ctx.fillStyle = hairB;
+    const swayH = Math.sin(NOW * 2.2) * 2 - (moving ? sw * 3.5 : 0);
+    ctx.beginPath();
+    ctx.moveTo(-10, headCY - 4);
+    ctx.quadraticCurveTo(-22 + swayH, headCY + 18, -16 + swayH * 1.6, headCY + 36);
+    ctx.quadraticCurveTo(-6, headCY + 26, -1, headCY + 10);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Piernas
+  if (isSitting){
+    ctx.lineWidth = 5.2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = isF ? '#261722' : pantsA;
+    ctx.beginPath();
+    ctx.moveTo(-3, hipY); ctx.lineTo(12, hipY + 4); ctx.lineTo(14, 0);
+    ctx.stroke();
+    ctx.fillStyle = '#110d18';
+    ctx.beginPath(); ctx.ellipse(16, 0, 5, 2.5, 0, 0, Math.PI * 2); ctx.fill();
+  } else {
+    const legSw = moving ? sw * 8.5 : 0;
+    const footL = -Math.max(0, Math.sin(walk)) * 4.2;
+    const footR = -Math.max(0, -Math.sin(walk)) * 4.2;
+    ctx.lineWidth = 5.4;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = isF ? '#281a24' : pantsA;
+
+    ctx.beginPath();
+    ctx.moveTo(0, hipY); ctx.lineTo(-legSw, footL);
+    ctx.moveTo(0, hipY); ctx.lineTo(legSw, footR);
+    ctx.stroke();
+
+    ctx.fillStyle = '#100c1a';
+    ctx.beginPath(); ctx.ellipse(-legSw + 2, footL, 5.5, 2.8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(legSw + 2, footR, 5.5, 2.8, 0, 0, Math.PI * 2); ctx.fill();
+    if (!isF) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-legSw, footL + 1.2, 5.5, 1.2);
+      ctx.fillRect(legSw, footR + 1.2, 5.5, 1.2);
+    }
+  }
+
+  // Vestimenta
+  if (isF){
+    ctx.fillStyle = colB;
+    ctx.beginPath();
+    ctx.moveTo(-4, neckY + 2);
+    ctx.lineTo(4, neckY + 2);
+    ctx.lineTo(8, hipY - 6);
+    ctx.lineTo(-8, hipY - 6);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = colBSkirt;
+    ctx.beginPath();
+    ctx.moveTo(-8, hipY - 6);
+    ctx.lineTo(8, hipY - 6);
+    const flare = 14 + (moving ? sw * 2 : 0);
+    ctx.lineTo(flare, hipY + 4);
+    ctx.lineTo(-flare, hipY + 4);
+    ctx.closePath();
+    ctx.fill();
+  } else {
+    ctx.fillStyle = colAInner;
+    ctx.fillRect(-3, neckY + 2, 6, hipY - neckY - 2);
+
+    ctx.fillStyle = colA;
+    ctx.beginPath();
+    ctx.moveTo(-7, shoulderY - 3);
+    ctx.lineTo(7, shoulderY - 3);
+    ctx.lineTo(6.5, hipY + 2);
+    ctx.lineTo(1.5, hipY + 2);
+    ctx.lineTo(2, neckY + 8);
+    ctx.lineTo(-2, neckY + 8);
+    ctx.lineTo(-1.5, hipY + 2);
+    ctx.lineTo(-6.5, hipY + 2);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Brazos y manos
+  ctx.lineWidth = 4.6;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = isF ? colB : colA;
+
+  let armA = o.armA !== undefined ? o.armA : (moving ? sw * 0.45 : 0.1);
+  let armB = o.armB !== undefined ? o.armB : (moving ? -sw * 0.45 : -0.1);
+
+  if (o.armPose === 'wave') {
+    armA = -2.1 + Math.sin(NOW * 9) * 0.45;
+    armB = 0.2;
+  } else if (o.armPose === 'reach') {
+    armA = 1.35;
+    armB = -0.3;
+  } else if (o.armPose === 'talk') {
+    armA = 1.1 + Math.sin(NOW * 5) * 0.25;
+    armB = 0.6 + Math.cos(NOW * 4.5) * 0.2;
+  } else if (o.armPose === 'chin') {
+    armA = 1.85;
+    armB = 0.2;
+  } else if (o.armPose === 'holdBoth') {
+    armA = 1.15;
+    armB = 1.05;
+  } else if (o.armPose === 'offerCake') {
+    armA = 1.45;
+    armB = 1.35;
+  } else if (o.armPose === 'claspHands') {
+    armA = 1.65;
+    armB = 1.65;
+  } else if (o.holdingHand) {
+    armA = 0.85 + (moving ? sw * 0.2 : 0);
+    armB = moving ? -sw * 0.45 : -0.15;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(0, shoulderY);
+  ctx.lineTo(Math.sin(armB) * 19, shoulderY + Math.cos(armB) * 19);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(0, shoulderY);
+  if (o.hug) {
+    ctx.quadraticCurveTo(12, shoulderY + 4, 16, shoulderY - 2);
+  } else if (o.armPose === 'chin') {
+    ctx.quadraticCurveTo(8, shoulderY + 12, 5, headCY + 8);
+  } else {
+    ctx.lineTo(Math.sin(armA) * 19, shoulderY + Math.cos(armA) * 19);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = skinTone;
+  if (!o.hug) {
+    const handX = Math.sin(armA) * 19;
+    const handY = shoulderY + Math.cos(armA) * 19;
+    ctx.beginPath(); ctx.arc(handX, handY, 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Cabeza y rostro
+  ctx.save();
+  ctx.translate(0, headCY);
+  ctx.rotate(headTilt * facing);
+  ctx.translate(0, -headCY);
+
+  ctx.fillStyle = skinShade;
+  ctx.fillRect(-2.5, neckY - 2, 5, 5);
+
+  ctx.fillStyle = skinTone;
+  ctx.beginPath(); ctx.arc(0, headCY, headR, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = isF ? hairB : hairA;
+  ctx.beginPath();
+  ctx.arc(0, headCY, headR + 1.2, Math.PI * 0.88, Math.PI * 2.12);
+  if (isF) {
+    ctx.lineTo(headR * 0.8, headCY - 2);
+    ctx.quadraticCurveTo(2, headCY - 4, -headR * 0.7, headCY + 4);
+  } else {
+    ctx.lineTo(headR * 0.7, headCY - 4);
+    ctx.quadraticCurveTo(0, headCY - 2, -headR * 0.65, headCY - 2);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  if (isF) {
+    ctx.fillStyle = '#ff8cb0';
+    ctx.beginPath(); ctx.arc(-7, headCY - 8, 3.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(-7, headCY - 8, 1.2, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Ojos
+  const eyeX = 4.2;
+  const eyeY = headCY + 1;
+  const blinkCycle = (NOW * 1.2) % 4.5;
+  const isBlinking = blinkCycle > 4.25;
+
+  ctx.save();
+  if (expr === 'bliss' || expr === 'happy' && o.hug) {
+    ctx.strokeStyle = '#281a28';
+    ctx.lineWidth = 1.6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY + 1.5, 3.2, Math.PI * 1.15, Math.PI * 1.85);
+    ctx.stroke();
+    if (isF) {
+      ctx.beginPath();
+      ctx.moveTo(eyeX + 2.5, eyeY + 0.8);
+      ctx.lineTo(eyeX + 4.5, eyeY - 0.5);
+      ctx.stroke();
+    }
+  } else if (isBlinking) {
+    ctx.strokeStyle = '#281a28';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(eyeX - 3, eyeY + 1);
+    ctx.lineTo(eyeX + 3, eyeY + 1);
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.ellipse(eyeX, eyeY, 3.2, 3.8, 0, 0, Math.PI * 2); ctx.fill();
+
+    const irisColor = isF ? '#4d2b26' : '#2b384a';
+    const pX = clamp(eyeX + gazeX * 1.2, eyeX - 1.5, eyeX + 1.5);
+    const pY = clamp(eyeY + gazeY * 1.2, eyeY - 1.2, eyeY + 1.2);
+
+    ctx.fillStyle = irisColor;
+    ctx.beginPath(); ctx.arc(pX, pY, 2.4, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#100c14';
+    ctx.beginPath(); ctx.arc(pX, pY, 1.3, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(pX + 0.8, pY - 0.9, 0.95, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(pX - 0.8, pY + 0.8, 0.45, 0, Math.PI * 2); ctx.fill();
+
+    if (expr === 'sparkle' || expr === 'inLove') {
+      ctx.fillStyle = 'rgba(255, 230, 160, 0.85)';
+      ctx.beginPath(); ctx.arc(pX, pY, 0.8, 0, Math.PI * 2); ctx.fill();
+    }
+
+    ctx.strokeStyle = '#1d1522';
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY - 0.5, 3.4, Math.PI * 1.2, Math.PI * 1.85);
+    ctx.stroke();
+    if (isF) {
+      ctx.beginPath();
+      ctx.moveTo(eyeX + 2.6, eyeY - 1.8);
+      ctx.lineTo(eyeX + 4.2, eyeY - 3.2);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  // Cejas
+  ctx.strokeStyle = isF ? hairB : hairA;
+  ctx.lineWidth = 1.3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  const browY = headCY - 4.2;
+
+  if (expr === 'sad' || expr === 'longing') {
+    ctx.moveTo(eyeX - 3.2, browY + 1.2);
+    ctx.quadraticCurveTo(eyeX, browY - 0.5, eyeX + 3.2, browY + 1.8);
+  } else if (expr === 'curious' || expr === 'shy') {
+    ctx.moveTo(eyeX - 3, browY - 0.5);
+    ctx.quadraticCurveTo(eyeX, browY - 1.8, eyeX + 3.2, browY - 0.8);
+  } else if (expr === 'happy' || expr === 'bliss' || expr === 'inLove') {
+    ctx.moveTo(eyeX - 3.2, browY + 0.2);
+    ctx.quadraticCurveTo(eyeX, browY - 1.4, eyeX + 3.2, browY + 0.2);
+  } else {
+    ctx.moveTo(eyeX - 3, browY);
+    ctx.lineTo(eyeX + 3, browY);
+  }
+  ctx.stroke();
+
+  // Mejillas
+  const blushAlpha = (expr === 'shy' || expr === 'inLove' || expr === 'bliss') ? 0.65 : 0.35;
+  ctx.fillStyle = `rgba(255, 105, 145, ${blushAlpha})`;
+  ctx.beginPath(); ctx.ellipse(eyeX + 1.5, headCY + 5.5, 3.4, 2.2, 0, 0, Math.PI * 2); ctx.fill();
+
+  if (expr === 'shy' || expr === 'inLove' || expr === 'bliss') {
+    ctx.strokeStyle = 'rgba(235, 75, 120, 0.7)';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(eyeX, headCY + 4.8); ctx.lineTo(eyeX + 1.5, headCY + 6.4);
+    ctx.moveTo(eyeX + 2, headCY + 4.8); ctx.lineTo(eyeX + 3.5, headCY + 6.4);
+    ctx.stroke();
+  }
+
+  // Boca
+  ctx.strokeStyle = '#3a1f28';
+  ctx.lineWidth = 1.3;
+  ctx.lineCap = 'round';
+  const mouthX = eyeX;
+  const mouthY = headCY + 8;
+
+  if (expr === 'talking') {
+    const talkOpen = Math.sin(NOW * 12) > 0;
+    if (talkOpen) {
+      ctx.fillStyle = '#b33d59';
+      ctx.beginPath(); ctx.ellipse(mouthX, mouthY, 2.2, 1.6, 0, 0, Math.PI * 2); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.arc(mouthX, mouthY - 0.5, 2.4, 0.2, Math.PI - 0.2); ctx.stroke();
+    }
+  } else if (expr === 'happy' || expr === 'inLove' || expr === 'bliss') {
+    ctx.beginPath(); ctx.arc(mouthX, mouthY - 0.8, 2.8, 0.15, Math.PI - 0.15); ctx.stroke();
+  } else if (expr === 'sad' || expr === 'longing') {
+    ctx.beginPath(); ctx.arc(mouthX, mouthY + 2.5, 2.5, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+  } else {
+    ctx.beginPath(); ctx.moveTo(mouthX - 1.8, mouthY); ctx.lineTo(mouthX + 1.8, mouthY); ctx.stroke();
+  }
+
+  ctx.restore();
+  ctx.restore();
+}
+
+/* ============================================================
+   ESCENARIOS PREVIOS AL CUMPLEAÑOS
+   ============================================================ */
+function drawInstitute(groundY, S, t){
+  const instW = Math.min(W * 0.88, 480 * S);
+  const instX = W * 0.5 - instW * 0.5;
+  const instH = Math.min(175 * S, groundY * 0.65);
+  const topY  = groundY - instH;
+
+  ctx.save();
+  const bgGrad = ctx.createLinearGradient(0, topY, 0, groundY);
+  bgGrad.addColorStop(0, '#15132d');
+  bgGrad.addColorStop(1, '#0e0c1f');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(instX, topY, instW, instH);
+
+  ctx.fillStyle = '#1e1a3d';
+  ctx.fillRect(instX - 6 * S, topY - 14 * S, instW + 12 * S, 14 * S);
+  
+  const pedW = instW * 0.46;
+  const pedX = W * 0.5;
+  ctx.beginPath();
+  ctx.moveTo(pedX - pedW * 0.5, topY - 14 * S);
+  ctx.lineTo(pedX, topY - 44 * S);
+  ctx.lineTo(pedX + pedW * 0.5, topY - 14 * S);
+  ctx.closePath();
+  ctx.fill();
+
+  const towerW = 42 * S;
+  const towerH = 42 * S;
+  const towerX = pedX - towerW * 0.5;
+  const towerY = topY - 44 * S - towerH;
+  ctx.fillStyle = '#171433';
+  ctx.fillRect(towerX, towerY, towerW, towerH);
+  ctx.beginPath();
+  ctx.moveTo(towerX - 4 * S, towerY);
+  ctx.lineTo(pedX, towerY - 20 * S);
+  ctx.lineTo(towerX + towerW + 4 * S, towerY);
+  ctx.closePath();
+  ctx.fill();
+
+  const clockR = 13 * S;
+  const clockY = towerY + towerH * 0.52;
+  ctx.fillStyle = '#ffeed0';
+  ctx.beginPath(); ctx.arc(pedX, clockY, clockR, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#22193b';
+  ctx.beginPath(); ctx.arc(pedX, clockY, clockR - 2.5 * S, 0, Math.PI * 2); ctx.fill();
+  
+  ctx.fillStyle = '#ffeed0';
+  ctx.fillRect(pedX - 1.2 * S, clockY - 7 * S, 2.4 * S, 7 * S);
+  ctx.fillRect(pedX - 1.2 * S, clockY - 1.2 * S, 6 * S, 2.4 * S);
+  ctx.beginPath(); ctx.arc(pedX, clockY, 2.5 * S, 0, Math.PI * 2); ctx.fill();
+
+  const rows = 3;
+  const cols = 5;
+  for (let r = 0; r < rows; r++){
+    for (let c = 0; c < cols; c++){
+      const wx = instX + (c + 0.55) * (instW / cols);
+      const wy = topY + 20 * S + r * 38 * S;
+      const ww = instW * 0.09;
+      const wh = 24 * S;
+
+      ctx.fillStyle = '#0a0916';
+      ctx.fillRect(wx, wy, ww, wh);
+
+      const flick = 0.75 + 0.25 * Math.sin(t * 1.5 + r * 3 + c * 2);
+      ctx.fillStyle = `rgba(255, 215, 130, ${flick * 0.85})`;
+      ctx.fillRect(wx + 1.5 * S, wy + 1.5 * S, ww - 3 * S, wh - 3 * S);
+
+      ctx.fillStyle = '#0a0916';
+      ctx.fillRect(wx + ww * 0.5 - 0.8 * S, wy, 1.6 * S, wh);
+      ctx.fillRect(wx, wy + wh * 0.5 - 0.8 * S, ww, 1.6 * S);
+    }
+  }
+
+  const doorW = 34 * S;
+  const doorH = 46 * S;
+  ctx.fillStyle = '#0c0a1a';
+  ctx.fillRect(pedX - doorW * 0.5, groundY - doorH, doorW, doorH);
+  ctx.fillStyle = 'rgba(255, 200, 110, 0.45)';
+  ctx.beginPath();
+  ctx.arc(pedX, groundY - doorH + 12 * S, 12 * S, Math.PI, 0);
+  ctx.fill();
+
+  ctx.fillStyle = '#080713';
+  for (let vx = 0; vx < W; vx += 16 * S){
+    if (vx < pedX - doorW * 0.7 || vx > pedX + doorW * 0.7){
+      ctx.fillRect(vx, groundY - 30 * S, 3 * S, 30 * S);
+      ctx.beginPath();
+      ctx.moveTo(vx - 2 * S, groundY - 30 * S);
+      ctx.lineTo(vx + 1.5 * S, groundY - 35 * S);
+      ctx.lineTo(vx + 5 * S, groundY - 30 * S);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  ctx.fillRect(0, groundY - 22 * S, W, 3.5 * S);
+
+  drawLamp(W * 0.12, groundY, S, 1);
+  drawLamp(W * 0.88, groundY, S, 1);
+  ctx.restore();
+}
+
+function sc1(p, t, groundY){
+  const S = getScale();
+  drawStars(0.65, t);
+  drawShootingStar(t, 4.5, 1.5);
+  drawBuildings(groundY, 40, '#100c24', 0.7, 0.18, t);
+  drawInstitute(groundY, S, t);
+
+  const xA = lerp(-50 * S, W * 0.68, p);
+  const xB = lerp(W + 50 * S, W * 0.32, p);
+  const isCrossing = Math.abs(xA - xB) < 65 * S;
+  const hasPassed  = xA > xB + 10 * S;
+
+  drawPerson(xA, groundY, S, {
+    who: 'a', facing: 1, walk: t * 4.2,
+    expression: hasPassed ? 'curious' : (isCrossing ? 'shy' : 'neutral'),
+    gazeX: isCrossing ? 0.8 : (hasPassed ? -0.7 : 0.2),
+    headTilt: isCrossing ? 0.12 : 0
+  });
+
+  drawPerson(xB, groundY, S, {
+    who: 'b', facing: -1, walk: t * 4.2,
+    expression: hasPassed ? 'curious' : (isCrossing ? 'shy' : 'neutral'),
+    gazeX: isCrossing ? -0.8 : (hasPassed ? 0.7 : -0.2),
+    headTilt: isCrossing ? -0.12 : 0
+  });
+}
+
+function sc2(p, t, groundY){
+  const S = getScale();
+  drawStars(0.85, t);
+  drawMoon(W * 0.84, H * 0.16, 30 * S * 0.85);
+  drawBuildings(groundY, 70, '#191238', 0.85, 0.25, t);
+  drawBuildings(groundY, 15, '#0d0920', 1.05, 0.55, t);
+  drawLamp(W * 0.10, groundY, S, 1);
+  drawLamp(W * 0.90, groundY, S, 1);
+
+  const cx = W * 0.5;
+  const maxDist = Math.min(130 * S, W * 0.38);
+  let xA, xB, facingA, facingB, exprA, exprB, armPoseA, armPoseB, walkA = 0, walkB = 0;
+
+  if (p < 0.33){
+    const f1 = p / 0.33;
+    xA = lerp(cx - maxDist, cx - 26 * S, ease(f1));
+    xB = lerp(cx + maxDist, cx + 26 * S, ease(f1));
+    facingA = 1; facingB = -1;
+    walkA = f1 < 0.85 ? t * 4.6 : 0;
+    walkB = f1 < 0.85 ? t * 4.6 : 0;
+    exprA = 'happy'; exprB = 'happy';
+    armPoseA = f1 < 0.7 ? 'wave' : 'natural';
+    armPoseB = f1 < 0.7 ? 'wave' : 'natural';
+  } else if (p < 0.67){
+    const f2 = (p - 0.33) / 0.34;
+    xA = lerp(cx - 26 * S, cx - maxDist, ease(f2));
+    xB = lerp(cx + 26 * S, cx + maxDist, ease(f2));
+    facingA = -1; facingB = 1;
+    walkA = f2 < 0.8 ? t * 3.6 : 0;
+    walkB = f2 < 0.8 ? t * 3.6 : 0;
+    exprA = 'sad'; exprB = 'sad';
+    armPoseA = f2 > 0.6 ? 'reach' : 'natural';
+    armPoseB = f2 > 0.6 ? 'reach' : 'natural';
+  } else {
+    const f3 = (p - 0.67) / 0.33;
+    xA = lerp(cx - maxDist, cx - 22 * S, ease(f3));
+    xB = lerp(cx + maxDist, cx + 22 * S, ease(f3));
+    facingA = 1; facingB = -1;
+    walkA = f3 < 0.9 ? t * 5.2 : 0;
+    walkB = f3 < 0.9 ? t * 5.2 : 0;
+    exprA = 'happy'; exprB = 'happy';
+    armPoseA = 'natural'; armPoseB = 'natural';
+  }
+
+  drawPerson(xA, groundY, S, { who: 'a', facing: facingA, walk: walkA, expression: exprA, armPose: armPoseA });
+  drawPerson(xB, groundY, S, { who: 'b', facing: facingB, walk: walkB, expression: exprB, armPose: armPoseB });
+}
+
+function drawBench(x, groundY, S){
+  ctx.save();
+  ctx.translate(x, groundY);
+  ctx.scale(S, S);
+  ctx.fillStyle = '#1c1524';
+  ctx.fillRect(-28, -18, 5, 18);
+  ctx.fillRect(23, -18, 5, 18);
+  ctx.fillStyle = '#6e3f24';
+  ctx.fillRect(-34, -20, 68, 6.5);
+  ctx.fillRect(-34, -38, 68, 6.5);
+  ctx.fillRect(-34, -28, 68, 6.5);
+  ctx.restore();
+}
+
+function drawCherryTree(x, groundY, S, t){
+  ctx.save();
+  ctx.translate(x, groundY);
+  ctx.scale(S, S);
+  ctx.fillStyle = '#3a2218';
+  ctx.beginPath();
+  ctx.moveTo(-16, 0); ctx.quadraticCurveTo(-10, -70, -28, -135);
+  ctx.quadraticCurveTo(-5, -100, 2, -145); ctx.quadraticCurveTo(15, -85, 20, 0);
+  ctx.closePath(); ctx.fill();
+
+  const sway = Math.sin(t * 1.4) * 3.5;
+  const puffCols = ['#f7a1c4', '#ffbad5', '#f28cb8', '#ffffff'];
+  const puffs = [
+    { x: -35 + sway, y: -160, r: 48, c: 0 },
+    { x: 15 + sway * 0.8, y: -175, r: 56, c: 1 },
+    { x: -65 + sway * 0.6, y: -130, r: 42, c: 2 },
+    { x: 55 + sway * 0.7, y: -145, r: 46, c: 0 }
+  ];
+  puffs.forEach(p => {
+    ctx.fillStyle = puffCols[p.c];
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.restore();
+}
+
+function sc3(p, t, groundY){
+  const S = getScale();
+  const sunX = W * 0.82, sunY = H * 0.16;
+  const sg = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, H * 0.35);
+  sg.addColorStop(0, 'rgba(255, 245, 190, 0.95)');
+  sg.addColorStop(0.35, 'rgba(255, 230, 160, 0.35)');
+  sg.addColorStop(1, 'rgba(255, 230, 160, 0)');
+  ctx.fillStyle = sg;
+  ctx.beginPath(); ctx.arc(sunX, sunY, H * 0.35, 0, Math.PI * 2); ctx.fill();
+
+  drawCherryTree(W > 600 ? W * 0.84 : W * 0.88, groundY, S * (W > 600 ? 1.15 : 0.95), t);
+  drawCherryTree(W > 600 ? W * 0.14 : W * 0.08, groundY, S * 0.8, t + 1);
+
+  const benchX = W * 0.5;
+  drawBench(benchX, groundY, S * 1.05);
+
+  const isATalking = ((t * 0.32) % 2) < 1;
+  drawPerson(benchX - 16 * S, groundY, S * 1.02, {
+    who: 'a', facing: 1, isSitting: true,
+    expression: isATalking ? 'talking' : 'adoring',
+    armPose: isATalking ? 'talk' : 'chin',
+    gazeX: 0.6, headTilt: 0.12
+  });
+
+  drawPerson(benchX + 16 * S, groundY, S * 1.02, {
+    who: 'b', facing: -1, isSitting: true,
+    expression: isATalking ? 'adoring' : 'talking',
+    armPose: isATalking ? 'chin' : 'talk',
+    gazeX: -0.6, headTilt: -0.12
+  });
+}
+
+function sc4(p, t, groundY){
+  const S = getScale();
+  drawStars(1, t);
+  drawShootingStar(t, 3.2, 0.4);
+  drawMoon(W * 0.82, H * 0.15, 34 * S * 0.85);
+  drawFireflies(t, groundY, S, 28, 1);
+
+  const cx = W * 0.5;
+  const cy = groundY - 68 * S;
+  const glow = ease(clamp(p / 0.45, 0, 1));
+
+  if (glow > 0){
+    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 180 * S * glow);
+    rg.addColorStop(0, `rgba(255, 150, 200, ${0.75 * glow})`);
+    rg.addColorStop(0.35, `rgba(255, 200, 120, ${0.4 * glow})`);
+    rg.addColorStop(1, 'rgba(255, 150, 200, 0)');
+    ctx.fillStyle = rg;
+    ctx.beginPath(); ctx.arc(cx, cy, 180 * S * glow, 0, Math.PI * 2); ctx.fill();
+
+    const pulse = 1 + Math.pow(Math.sin(t * 4.5), 4) * 0.18;
+    drawHeart(cx, cy, 26 * S * glow * pulse, `rgba(255, 90, 150, ${glow * 0.95})`);
+  }
+
+  drawPerson(cx - 18 * S, groundY, S, {
+    who: 'a', facing: 1, armPose: 'holdBoth',
+    lean: 0.08, headTilt: 0.12, expression: 'sparkle', gazeX: 0.8
+  });
+  drawPerson(cx + 18 * S, groundY, S, {
+    who: 'b', facing: -1, armPose: 'holdBoth',
+    lean: 0.08, headTilt: 0.12, expression: 'sparkle', gazeX: -0.8
+  });
+}
+
+function sc5(p, t, groundY){
+  const S = getScale();
+  const sunX = W * 0.5, sunY = lerp(groundY - H * 0.18, groundY - H * 0.04, p);
+  const sg = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, H * 0.42);
+  sg.addColorStop(0, 'rgba(255, 205, 120, 0.95)');
+  sg.addColorStop(0.35, 'rgba(255, 120, 80, 0.45)');
+  sg.addColorStop(1, 'rgba(255, 90, 60, 0)');
+  ctx.fillStyle = sg;
+  ctx.beginPath(); ctx.arc(sunX, sunY, H * 0.42, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = '#1c1024';
+  ctx.fillRect(0, groundY - 6 * S, W, 8 * S);
+  ctx.fillStyle = '#2d1838';
+  ctx.fillRect(0, groundY - 26 * S, W, 3.5 * S);
+  for (let bx = 12 * S; bx < W; bx += 22 * S){
+    ctx.fillRect(bx, groundY - 26 * S, 3 * S, 20 * S);
+  }
+
+  const e = ease(clamp(p * 1.05, 0, 1));
+  const baseX = lerp(-70 * S, W * (W > 600 ? 0.44 : 0.38), e);
+  const gap = 24 * S;
+  const walk = t * 4.6;
+
+  drawPerson(baseX, groundY - 6 * S, S, {
+    who: 'a', facing: 1, walk, holdingHand: true,
+    expression: 'inLove', gazeX: 0.5, lean: 0.04
+  });
+  drawPerson(baseX + gap, groundY - 6 * S, S, {
+    who: 'b', facing: 1, walk, holdingHand: true,
+    expression: 'inLove', gazeX: -0.5, lean: 0.04
+  });
+}
+
+/* ============================================================
+   ESCENARIO 6: EL GRAN FINAL DE CUMPLEAÑOS (MEJORADO & POÉTICO)
+   ============================================================ */
+function drawSkyLanterns(t, groundY, S){
+  // Linternas de deseos flotantes que ascienden mágicamente
+  ctx.save();
+  skyLanterns.forEach(l => {
+    const y = ((l.y - t * l.speed) % (groundY - 40) + (groundY - 40)) % (groundY - 40);
+    const x = l.x + Math.sin(t * l.wobbleSpeed + l.wobble) * 16 * S;
+    const sz = l.size * S;
+
+    // Resplandor cálido
+    const lg = ctx.createRadialGradient(x, y, 0, x, y, sz * 3.2);
+    lg.addColorStop(0, 'rgba(255, 200, 110, 0.55)');
+    lg.addColorStop(0.5, 'rgba(255, 140, 60, 0.18)');
+    lg.addColorStop(1, 'rgba(255, 140, 60, 0)');
+    ctx.fillStyle = lg;
+    ctx.beginPath(); ctx.arc(x, y, sz * 3.2, 0, Math.PI * 2); ctx.fill();
+
+    // Linterna de papel
+    ctx.fillStyle = '#ffdfa0';
+    ctx.beginPath();
+    ctx.roundRect(x - sz * 0.5, y - sz * 0.7, sz, sz * 1.3, [3 * S, 3 * S, 1 * S, 1 * S]);
+    ctx.fill();
+
+    // Llama interior ardiente
+    ctx.fillStyle = '#ff7b30';
+    ctx.beginPath();
+    ctx.arc(x, y + sz * 0.35, sz * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawBirthdayBanner(t){
+  ctx.save();
+  const bannerY = H * 0.06;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(W * 0.04, bannerY);
+  ctx.quadraticCurveTo(W * 0.5, bannerY + 28, W * 0.96, bannerY);
+  ctx.stroke();
+
+  const text = "FELIZ CUMPLEAÑOS";
+  const numFlags = text.length;
+  const flagColors = ['#ff6b9d', '#ffd15c', '#5fe3a1', '#5fb2ff', '#b56bff', '#ff925c'];
+
+  for (let i = 0; i < numFlags; i++){
+    const u = (i + 0.8) / (numFlags + 0.6);
+    const fx = W * 0.04 + u * (W * 0.92);
+    const fy = lerp(bannerY, bannerY + 28, 4 * u * (1 - u));
+    const sway = Math.sin(t * 3 + i) * 1.8;
+    const col = flagColors[i % flagColors.length];
+
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(fx - 10, fy);
+    ctx.lineTo(fx + 10, fy);
+    ctx.lineTo(fx + sway, fy + 22);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 11px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(text[i], fx, fy + 13);
+  }
+  ctx.restore();
+}
+
+function drawBirthdayGifts(x, groundY, S, t){
+  ctx.save();
+  ctx.translate(x, groundY);
+  ctx.scale(S, S);
+
+  // Regalo grande con lazo dorado
+  ctx.fillStyle = '#4361ee';
+  ctx.fillRect(-35, -24, 24, 24);
+  ctx.fillStyle = '#ffd15c';
+  ctx.fillRect(-25, -24, 4, 24);
+  ctx.fillRect(-35, -14, 24, 4);
+  ctx.beginPath();
+  ctx.arc(-26, -26, 4, 0, Math.PI * 2); ctx.arc(-20, -26, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Regalo pequeño rosa
+  ctx.fillStyle = '#ff4d8d';
+  ctx.fillRect(-14, -18, 18, 18);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(-7, -18, 3.5, 18);
+  ctx.fillRect(-14, -10, 18, 3.5);
+  ctx.beginPath();
+  ctx.arc(-7, -20, 3, 0, Math.PI * 2); ctx.arc(-3, -20, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawInteractiveCake(x, groundY, S, t){
+  ctx.save();
+  ctx.translate(x, groundY);
+  ctx.scale(S, S);
+
+  ctx.fillStyle = '#181024';
+  ctx.fillRect(-26, -26, 52, 26);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(-28, -30, 56, 5);
+
+  ctx.fillStyle = '#fff0e6';
+  ctx.fillRect(-19, -46, 38, 16);
+
+  ctx.fillStyle = '#4a2612';
+  ctx.fillRect(-19, -38, 38, 3);
+
+  ctx.fillStyle = '#ff6b9d';
+  ctx.beginPath();
+  ctx.moveTo(-20, -46);
+  for (let i = 0; i < 5; i++){
+    ctx.quadraticCurveTo(-15 + i * 8, -40, -11 + i * 8, -46);
+  }
+  ctx.lineTo(20, -46); ctx.lineTo(20, -50); ctx.lineTo(-20, -50);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#e63946';
+  [-12, -4, 4, 12].forEach(fx => {
+    ctx.beginPath(); ctx.arc(fx, -52, 3, 0, Math.PI * 2); ctx.fill();
+  });
+
+  ctx.fillStyle = '#ffd15c';
+  ctx.fillRect(-1.8, -62, 3.6, 12);
+
+  if (!candleBlown) {
+    const fFlick = Math.sin(t * 15) * 0.9;
+    const fg = ctx.createRadialGradient(0, -66, 0, 0, -66, 22);
+    fg.addColorStop(0, 'rgba(255, 240, 130, 0.95)');
+    fg.addColorStop(0.35, 'rgba(255, 140, 40, 0.55)');
+    fg.addColorStop(1, 'rgba(255, 140, 40, 0)');
+    ctx.fillStyle = fg;
+    ctx.beginPath(); ctx.arc(0, -66, 22, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#fffce0';
+    ctx.beginPath();
+    ctx.ellipse(fFlick * 0.5, -66, 2.5, 5, fFlick * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = '#3a2e38';
+    ctx.fillRect(-0.8, -64, 1.6, 2);
+
+    candleSmoke.forEach((sm) => {
+      ctx.fillStyle = `rgba(255, 230, 240, ${sm.alpha * 0.7})`;
+      ctx.beginPath(); ctx.arc(sm.x, sm.y, sm.r, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  ctx.restore();
+}
+
+function updateCandleSmoke(){
+  if (candleBlown) {
+    if (candleSmoke.length < 22 && Math.random() > 0.35){
+      candleSmoke.push({
+        x: (Math.random() - 0.5) * 4,
+        y: -65,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -0.8 - Math.random() * 0.6,
+        r: 1.5 + Math.random() * 2,
+        alpha: 0.9
+      });
+    }
+    candleSmoke.forEach(sm => {
+      sm.x += sm.vx;
+      sm.y += sm.vy;
+      sm.r += 0.05;
+      sm.alpha -= 0.012;
+    });
+    candleSmoke = candleSmoke.filter(sm => sm.alpha > 0);
+  }
+}
+
+// Fuegos artificiales poéticos con forma de corazón y cascadas doradas
+function drawFireworks(t, groundY, S, startAt){
+  if (t < startAt) return;
+  const hues = [340, 280, 200, 45, 160, 310, 25, 48];
+  const count = candleBlown ? 10 : 7;
+  const cycleDuration = count * 1.15;
+  const localT = (t - startAt) % cycleDuration;
+
+  for (let k = 0; k < count; k++){
+    const launchTime = k * 1.15;
+    let age = localT - launchTime;
+    if (age < 0) age += cycleDuration;
+    if (age > 3.3) continue;
+
+    const cycleIdx = Math.floor((t - startAt) / cycleDuration);
+    const cx = W * (0.12 + pseudo((k + cycleIdx * 11) * 3.3) * 0.76);
+    const cy = H * (0.07 + pseudo((k + cycleIdx * 11) * 5.1) * 0.28);
+    const hue = hues[(k + cycleIdx * 3) % hues.length];
+    const isHeartFirework = (k % 3 === 0); // Algunos fuegos artificiales estallan en forma de corazón
+
+    if (age < 0.6){
+      const rp = age / 0.6;
+      const ry = lerp(groundY, cy, 1 - Math.pow(1 - rp, 2));
+      ctx.fillStyle = `hsla(${hue}, 100%, 88%, .95)`;
+      ctx.beginPath(); ctx.arc(cx + Math.sin(rp * 10) * 4, ry, 2.5 * S * 0.8, 0, Math.PI * 2); ctx.fill();
+    } else {
+      const a = age - 0.6;
+      const life = a / 2.7;
+      const al = clamp(1 - life, 0, 1);
+
+      if (isHeartFirework) {
+        // Explosión en forma de corazón radiante
+        const N = candleBlown ? 40 : 32;
+        const rad = 110 * S * (1 - Math.exp(-2.2 * a)) / 2.2;
+        for (let i = 0; i < N; i++){
+          const ang = (i / N) * Math.PI * 2;
+          const hx = 16 * Math.pow(Math.sin(ang), 3);
+          const hy = -(13 * Math.cos(ang) - 5 * Math.cos(2*ang) - 2 * Math.cos(3*ang) - Math.cos(4*ang));
+          const px = cx + (hx / 16) * rad;
+          const py = cy + (hy / 16) * rad + 18 * a * a * S;
+          ctx.fillStyle = `hsla(${hue}, 100%, 75%, ${al})`;
+          ctx.beginPath(); ctx.arc(px, py, (2.6 - life * 1.2) * S * 0.8, 0, Math.PI * 2); ctx.fill();
+        }
+      } else {
+        // Sauce llorón clásico con chispas doradas descendentes
+        const N = candleBlown ? 55 : 44;
+        for (let i = 0; i < N; i++){
+          const ang = (i / N) * Math.PI * 2 + pseudo(k * 7 + i) * 0.2;
+          const sp = 140 + pseudo(k * 17 + i) * 110;
+          const d = sp * S * (1 - Math.exp(-2.5 * a)) / 2.5;
+          const px = cx + Math.cos(ang) * d;
+          const py = cy + Math.sin(ang) * d + 30 * a * a * S;
+          ctx.fillStyle = `hsla(${hue + (i % 3) * 15}, 100%, ${78 - life * 22}%, ${al})`;
+          ctx.beginPath(); ctx.arc(px, py, (2.6 - life * 1.4) * S * 0.8, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+  }
+}
+
+const photos = [];
+function loadPhotos(){
+  photos.length = 0;
+  (CONFIG.fotos || []).forEach(src => {
+    const img = new Image();
+    img.onload = () => { img._ok = true; };
+    img.onerror = () => { img._ok = false; };
+    img.src = src;
+    photos.push(img);
+  });
+}
+
+function drawPolaroid(img, x, y, w, rot, alpha){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(x, y); ctx.rotate(rot);
+  ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = 20;
+  ctx.fillStyle = '#fff';
+  const h = w * 1.2, pad = w * 0.07;
+  ctx.fillRect(-w / 2, -h / 2, w, h);
+  ctx.shadowBlur = 0;
+  const iw = w - pad * 2, ih = w - pad * 2;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(-w / 2 + pad, -h / 2 + pad, iw, ih); ctx.clip();
+  const sc = Math.max(iw / img.width, ih / img.height);
+  ctx.drawImage(img, -img.width * sc / 2, -h / 2 + pad + ih / 2 - img.height * sc / 2, img.width * sc, img.height * sc);
+  ctx.restore();
+
+  // Washi tape decorativo
+  ctx.fillStyle = 'rgba(255, 180, 200, 0.7)';
+  ctx.fillRect(-w * 0.2, -h / 2 - 5, w * 0.4, 10);
+  ctx.restore();
+}
+
+function sc6(p, t, groundY){
+  const S = getScale();
+  const isPortrait = H > W;
+
+  drawStars(1, t);
+  drawShootingStar(t, 2.8, 0.6);
+  drawMoon(W * 0.14, H * 0.14, 28 * S * 0.85);
+
+  // Linternas de deseos que suben lentamente hacia las estrellas
+  drawSkyLanterns(t, groundY, S);
+
+  // Guirnalda festiva de cumpleaños arriba
+  drawBirthdayBanner(t);
+  drawFireworks(t, groundY, S, 0.4);
+
+  // Mesa, pastel y regalos interactivos
+  const cakeX = isPortrait ? W * 0.22 : W * 0.20;
+  drawBirthdayGifts(cakeX - 35 * S, groundY, S * (isPortrait ? 0.95 : 1.05), t);
+  drawInteractiveCake(cakeX, groundY, S * (isPortrait ? 1.0 : 1.15), t);
+  updateCandleSmoke();
+
+  const cx = isPortrait ? W * 0.58 : W * 0.52;
+  const cy = groundY - 140 * S;
+
+  // Gran corazón de amor latiendo en el centro
+  const hp = ease(clamp((p - 0.06) / 0.35, 0, 1));
+  if (hp > 0){
+    const beat = Math.pow(Math.max(0, Math.sin(t * 4.2)), 6);
+    const pulse = 1 + beat * 0.12;
+    const size = 68 * S * hp * pulse;
+    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 2.8);
+    rg.addColorStop(0, `rgba(255, 100, 160, ${0.45 * hp})`);
+    rg.addColorStop(1, 'rgba(255, 100, 160, 0)');
+    ctx.fillStyle = rg;
+    ctx.beginPath(); ctx.arc(cx, cy, size * 2.8, 0, Math.PI * 2); ctx.fill();
+    drawHeart(cx, cy, size, `rgba(255, 115, 175, ${0.95 * hp})`);
+  }
+
+  // Lluvia continua de confeti y corazones
+  for (let i = 0; i < 28; i++){
+    const r = pseudo(i * 4.7);
+    const phase = ((t * 0.22 + r) % 1);
+    const hx = W * (0.05 + r * 0.9) + Math.sin(t * 1.2 + i) * 8 * S;
+    const hy = groundY - 30 - phase * H * 0.88;
+    const a = Math.sin(phase * Math.PI) * 0.85;
+    if (a > 0.02) drawHeart(hx, hy, (6 + r * 8) * S, `rgba(255, 140, 195, ${a})`);
+  }
+
+  // Polaroids de sus recuerdos flotando alrededor
+  const okPhotos = photos.filter(im => im._ok);
+  okPhotos.slice(0, 6).forEach((img, i) => {
+    const pa = ease(clamp((p - 0.12 - i * 0.08) / 0.25, 0, 1));
+    if (pa <= 0) return;
+    const side = i % 2 ? 1 : -1;
+    const row = Math.floor(i / 2);
+    const polW = isPortrait ? clamp(W * 0.24, 75, 110) : clamp(W * 0.21, 95, 205);
+    const px = W * (0.5 + side * (isPortrait ? 0.38 : 0.36)) + Math.sin(t * 0.85 + i) * 5;
+    const py = H * (isPortrait ? (0.16 + row * 0.18) : (0.24 + row * 0.26)) + Math.cos(t * 0.75 + i) * 5;
+    drawPolaroid(img, px, py, polW, side * 0.12 + Math.sin(t * 0.6 + i) * 0.04, pa);
+  });
+
+  // Los personajes celebrando el cumpleaños
+  const isEmbracePhase = p > 0.4;
+  const gap = 16 * S;
+
+  if (!isEmbracePhase) {
+    drawPerson(cx - 24 * S, groundY, S, {
+      who: 'a', facing: 1, armPose: 'offerCake',
+      expression: 'happy', headTilt: 0.08, gazeX: 0.6
+    });
+    drawPerson(cx + 20 * S, groundY, S, {
+      who: 'b', facing: -1, armPose: 'claspHands',
+      expression: 'bliss', headTilt: -0.1, gazeX: -0.6
+    });
+  } else {
+    drawPerson(cx - gap / 2, groundY, S, {
+      who: 'a', facing: 1, armPose: 'hug',
+      lean: 0.12, headTilt: 0.16, expression: 'bliss', hug: true
+    });
+    drawPerson(cx + gap / 2, groundY, S, {
+      who: 'b', facing: -1, armPose: 'hug',
+      lean: 0.12, headTilt: 0.16, expression: 'bliss', hug: true
+    });
+  }
+}
+
+/* ============================================================
+   LÓGICA DE ESCENAS, TRANSICIONES SUAVES Y TIEMPO
+   ============================================================ */
+let SCENES = [];
+function buildScenes(){
+  const T = CONFIG.textos;
+  // Duraciones más pausadas y placenteras para disfrutar cada detalle
+  SCENES = [
+    { dur: 11.0, skyTop:'#14132b', skyBot:'#5a315e', ground:'#130e26', caption:T[0], sub:'', draw: sc1 },
+    { dur: 12.0, skyTop:'#221740', skyBot:'#94487f', ground:'#160f33', caption:T[1], sub:'', draw: sc2 },
+    { dur: 13.0, skyTop:'#4fa3e3', skyBot:'#bde4f7', ground:'#3c854c', caption:T[2], sub:'', draw: sc3 },
+    { dur: 12.5, skyTop:'#080b21', skyBot:'#221a4f', ground:'#0f0c26', caption:T[3], sub:'', draw: sc4 },
+    { dur: 12.5, skyTop:'#2b1442', skyBot:'#e66a3d', ground:'#2b1730', caption:T[4], sub:'', draw: sc5 },
+    // Gran cumpleaños: clímax amplio y continuo
+    { dur: 35.0, skyTop:'#030412', skyBot:'#160f2e', ground:'#070617',
+      caption: FRASE_FINAL, sub: `Para ${NOMBRE} — con todo mi amor`, draw: sc6 }
+  ];
+  TOTAL = SCENES.reduce((a, s) => a + s.dur, 0);
+}
+
+let TOTAL = 1, elapsed = 0, playing = false, lastTime = 0, lastSceneIdx = -1, started = false;
+let capTok = 0;
+
+function getSceneAt(time){
+  let acc = 0;
+  for (let i = 0; i < SCENES.length; i++){
+    const s = SCENES[i];
+    if (time < acc + s.dur || i === SCENES.length - 1){
+      const isLast = (i === SCENES.length - 1);
+      const t = isLast ? (time - acc) : clamp(time - acc, 0, s.dur);
+      const p = clamp((time - acc) / s.dur, 0, 1);
+      return { i, t, p, scene: s, prev: i > 0 ? SCENES[i - 1] : s };
+    }
+    acc += s.dur;
+  }
+}
+
+const capEl     = document.getElementById('caption');
+const subEl     = document.getElementById('sub');
+const barEl     = document.getElementById('barra');
+const barraWrap = document.getElementById('barraWrap');
+const btnPause  = document.getElementById('btnPause');
+const btnReplay = document.getElementById('btnReplay');
+const letterModal = document.getElementById('letterModal');
+
+function hideCaption(){ capEl.classList.remove('on'); subEl.classList.remove('on'); }
+function showCaption(text, sub){
+  capEl.innerHTML = '';
+  text.split(' ').forEach((w, i) => {
+    const s = document.createElement('span');
+    s.textContent = w;
+    s.style.transitionDelay = (i * 0.08) + 's';
+    capEl.appendChild(s);
+  });
+  subEl.textContent = sub || '';
+  requestAnimationFrame(() => {
+    capEl.classList.add('on');
+    if (sub) subEl.classList.add('on');
+  });
+}
+
+function setCaption(scene, idx){
+  if (idx === lastSceneIdx) return;
+  lastSceneIdx = idx;
+  const tok = ++capTok;
+  hideCaption();
+  setTimeout(() => { if (tok === capTok) showCaption(scene.caption, scene.sub); }, 850);
+}
+
+function render(time){
+  NOW = time;
+  const st = getSceneAt(time);
+
+  // Transición suave cinematográfica entre escenarios (disolvencia de casi 3 segundos)
+  const fade  = easeInOutCubic(clamp(st.t / 2.8, 0, 1));
+  const intro = ease(clamp(st.t / 2.2, 0, 1));
+
+  const isPortrait = H > W;
+  const groundY = isPortrait ? H * 0.68 : H * 0.77;
+
+  const skyTop = lerpC(st.prev.skyTop, st.scene.skyTop, st.i === 0 ? 1 : fade);
+  const skyBot = lerpC(st.prev.skyBot, st.scene.skyBot, st.i === 0 ? 1 : fade);
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, skyTop);
+  g.addColorStop(1, skyBot);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  const gc = lerpC(st.prev.ground, st.scene.ground, st.i === 0 ? 1 : fade);
+  ctx.fillStyle = gc;
+  ctx.fillRect(0, groundY, W, H - groundY);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+  ctx.fillRect(0, groundY, W, 2);
+
+  ctx.save();
+  ctx.globalAlpha = intro;
+  st.scene.draw(st.p, st.t, groundY);
+  ctx.restore();
+
+  const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.42, W / 2, H / 2, Math.max(W, H) * 0.82);
+  vg.addColorStop(0, 'rgba(0,0,0,0)');
+  vg.addColorStop(1, 'rgba(0,0,0,0.48)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (time < 1.2){
+    ctx.fillStyle = `rgba(3, 4, 10, ${1 - time / 1.2})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  if (started && st.t > 0.8) setCaption(st.scene, st.i);
+  barEl.style.width = Math.min(100, (time / TOTAL * 100)) + '%';
+}
+
+function setPlaying(v){
+  playing = v;
+  lastTime = 0;
+  btnPause.innerHTML = v ? '⏸<span class="btn-txt"> Pausa</span>' : '▶<span class="btn-txt"> Seguir</span>';
+  if (v) Music.resume(); else Music.pause();
+}
+
+function tick(now){
+  requestAnimationFrame(tick);
+  if (!lastTime) lastTime = now;
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  if (playing){
+    elapsed += dt;
+    if (elapsed >= TOTAL){
+      btnReplay.classList.add('pulse');
+    }
+  }
+  render(elapsed);
+}
+
+function restart(){
+  elapsed = 0; lastSceneIdx = -1; lastTime = 0;
+  candleBlown = false;
+  candleSmoke = [];
+  capTok++; hideCaption();
+  btnReplay.classList.remove('pulse');
+  setPlaying(true);
+  try {
+    bgAudio.currentTime = AUDIO_START_SECOND;
+  } catch(_){}
+  Music.start();
+}
+
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('on'), 2500);
+}
+
+/* ============================================================
+   EVENTOS DE INTERACCIÓN
+   ============================================================ */
+function startStory() {
+  buildScenes();
+  loadPhotos();
+  document.getElementById('start').classList.add('hidden');
+  started = true;
+  restart();
+  toast('🎂 ¡Feliz Cumpleaños! Disfruta tu historia ✨');
+}
+
+document.getElementById('btnStart').addEventListener('click', startStory);
+document.getElementById('start').addEventListener('click', (e) => {
+  if (e.target.id !== 'btnStart') startStory();
+});
+
+// Modal de carta dedicatoria
+document.getElementById('btnLetter').addEventListener('click', (e) => {
+  e.stopPropagation();
+  letterModal.classList.add('open');
+});
+document.getElementById('btnCloseLetter').addEventListener('click', (e) => {
+  e.stopPropagation();
+  letterModal.classList.remove('open');
+});
+letterModal.addEventListener('click', (e) => {
+  if (e.target === letterModal) letterModal.classList.remove('open');
+});
+
+// Tocar torta para apagar velita o pausar en pantalla
+canvas.addEventListener('click', (e) => {
+  if (!started) return;
+  const st = getSceneAt(elapsed);
+  
+  if (st.i === 5) {
+    const isPortrait = H > W;
+    const cakeX = isPortrait ? W * 0.22 : W * 0.20;
+    const groundY = isPortrait ? H * 0.68 : H * 0.77;
+    const dx = e.clientX - cakeX;
+    const dy = e.clientY - (groundY - 60);
+    
+    if (Math.hypot(dx, dy) < 95) {
+      if (!candleBlown) {
+        candleBlown = true;
+        toast('🎂 ¡Deseo pedido con amor! Que se cumpla siempre ✨');
+      } else {
+        candleBlown = false;
+        toast('🕯️ ¡Vela encendida de nuevo! ✨');
+      }
+      return;
+    }
+  }
+
+  setPlaying(!playing);
+  toast(playing ? '▶ Continuando' : '⏸ Pausado');
+});
+
+btnPause.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (!started) return;
+  setPlaying(!playing);
+});
+
+btnReplay.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (started) restart();
+});
+
+document.getElementById('btnMute').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const on = Music.toggle();
+  e.currentTarget.innerHTML = on ? '🔊<span class="btn-txt"> Música</span>' : '🔇<span class="btn-txt"> Silencio</span>';
+});
+
+document.getElementById('btnShare').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const base = location.href.split('?')[0].split('#')[0];
+  const u = new URLSearchParams();
+  u.set('para', NOMBRE); u.set('de', TU_NOMBRE);
+  if (FRASE_FINAL) u.set('msg', FRASE_FINAL);
+  const link = base + '?' + u.toString();
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(
+      () => toast('Enlace copiado con amor 💌'),
+      () => window.prompt('Copia este enlace:', link)
+    );
+  } else {
+    window.prompt('Copia este enlace:', link);
+  }
+});
+
+let isScrubbing = false;
+function scrubTo(clientX){
+  if (!started) return;
+  elapsed = clamp(clientX / W, 0, 0.999) * TOTAL;
+  lastSceneIdx = -1; lastTime = 0;
+  btnReplay.classList.remove('pulse');
+  if (isAudioFilePlaying && bgAudio.duration) {
+    bgAudio.currentTime = AUDIO_START_SECOND + (elapsed / TOTAL) * (bgAudio.duration - AUDIO_START_SECOND);
+  }
+  if (!playing) setPlaying(true);
+  Music.start();
+}
+
+barraWrap.addEventListener('pointerdown', (e) => {
+  isScrubbing = true;
+  barraWrap.setPointerCapture(e.pointerId);
+  scrubTo(e.clientX);
+});
+barraWrap.addEventListener('pointermove', (e) => {
+  if (isScrubbing) scrubTo(e.clientX);
+});
+barraWrap.addEventListener('pointerup', (e) => {
+  if (isScrubbing){
+    isScrubbing = false;
+    try { barraWrap.releasePointerCapture(e.pointerId); } catch(_){}
+  }
+});
+barraWrap.addEventListener('pointercancel', () => { isScrubbing = false; });
+
+window.addEventListener('keydown', (e) => {
+  if (!started) return;
+  if (e.code === 'Space'){ e.preventDefault(); btnPause.click(); }
+  if (e.code === 'KeyR') restart();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && playing) setPlaying(false);
+});
+
+buildScenes();
+loadPhotos();
+resize();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
